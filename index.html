@@ -10,6 +10,15 @@
       padding: 0;
     }
 
+    input {
+      -webkit-appearance: none;
+    }
+
+    .form-wrapper {
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
     .form-group {
       font-size: 14px;
       margin: 0 20px;
@@ -33,6 +42,7 @@
       height: 40px;
       padding: 0;
       text-indent: 12px;
+      border-radius: 0;
     }
 
     .form-input:focus,
@@ -43,7 +53,7 @@
 
     .submit-btn {
       width: calc(100% - 40px);
-      height: 40px;
+      height: 42px;
       border: none;
       background-color: #39f;
       color: #fff;
@@ -66,37 +76,40 @@
   </style>
 </head>
 <body>
-  <form class="form-group">
-    <h1 class="form-group-title">攒钱计算器</h1>
-
+  <div class="form-wrapper">
+    <form class="form-group">
+      <h1 class="form-group-title">攒钱计算器</h1>
+  
+      <div class="form-item">
+        <input class="form-input" value="20000" type="text" id="baseMonthSalary" placeholder="基本月薪">
+      </div>
+  
+      <div class="form-item">
+        <input class="form-input" value="4000" type="text" id="livingExpenses" placeholder="基本月生活费">
+      </div>
+  
+      <div class="form-item">
+        <input class="form-input" value="80000" type="text" id="yearAwards" placeholder="年终奖">
+      </div>
+  
+      <div class="form-item">
+        <input class="form-input" value="1.18" type="text" id="annualizedRate" placeholder="年化率">
+      </div>
+  
+      <div class="form-item">
+        <input class="form-input" value="0.1" type="text" id="yearSalaryGrowthRate" placeholder="薪资年增长率">
+      </div>
+  
+      <div class="form-item">
+        <input class="form-input" value="10" type="text" id="years" placeholder="攒多少年">
+      </div>
+    </form>
+  
     <div class="form-item">
-      <input class="form-input" value="20000" type="text" id="baseMonthSalary" placeholder="基本月薪">
+      <button class="submit-btn" id="submit" onclick="calculateMoney()">提交</button>
     </div>
-
-    <div class="form-item">
-      <input class="form-input" value="4000" type="text" id="livingExpenses" placeholder="基本月生活费">
-    </div>
-
-    <div class="form-item">
-      <input class="form-input" value="80000" type="text" id="yearAwards" placeholder="年终奖">
-    </div>
-
-    <div class="form-item">
-      <input class="form-input" value="1.18" type="text" id="annualizedRate" placeholder="年化率">
-    </div>
-
-    <div class="form-item">
-      <input class="form-input" value="0.1" type="text" id="yearSalaryGrowthRate" placeholder="薪资年增长率">
-    </div>
-
-    <div class="form-item">
-      <input class="form-input" value="10" type="text" id="years" placeholder="攒多少年">
-    </div>
-  </form>
-
-  <div class="form-item">
-    <button class="submit-btn" id="submit" onclick="calculateMoney()">提交</button>
   </div>
+  
 
   <div class="finicial-summary" id="summary">
     
