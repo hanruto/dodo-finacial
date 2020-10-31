@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    .form-group {
+      font-size: 14px;
+      margin: 0 20px;
+    }
+
+    .form-group-title {
+      color: #4a4a4a;
+      font-size: 2em;
+      margin-bottom: .2em;
+      margin-top: 1em;
+    }
+
+    .form-item {
+      margin: 20px 0;
+
+    }
+
+    .form-input {
+      border: 1px solid #ccc;
+      width: 100%;
+      height: 40px;
+      padding: 0;
+      text-indent: 12px;
+    }
+
+    .form-input:focus,
+    .form-input:active {
+      border: 1px solid #39f;
+      outline: none;
+    }
+
+    .submit-btn {
+      width: calc(100% - 40px);
+      height: 40px;
+      border: none;
+      background-color: #39f;
+      color: #fff;
+      font-size: 16px;
+      margin: 0 20px;
+      box-sizing: border-box;
+    }
+
+    .submit-btn:focus,
+    .submit-btn:active {
+      border: 1px solid #39f;
+      outline: none;
+    }
+
+    .finicial-summary {
+      padding: 20px;
+      color: #4a4a4a;
+      line-height: 1.6em;
+    }
+  </style>
+</head>
+<body>
+  <form class="form-group">
+    <h1 class="form-group-title">攒钱计算器</h1>
+
+    <div class="form-item">
+      <input class="form-input" value="20000" type="text" id="baseMonthSalary" placeholder="基本月薪">
+    </div>
+
+    <div class="form-item">
+      <input class="form-input" value="4000" type="text" id="livingExpenses" placeholder="基本月生活费">
+    </div>
+
+    <div class="form-item">
+      <input class="form-input" value="80000" type="text" id="yearAwards" placeholder="年终奖">
+    </div>
+
+    <div class="form-item">
+      <input class="form-input" value="1.18" type="text" id="annualizedRate" placeholder="年化率">
+    </div>
+
+    <div class="form-item">
+      <input class="form-input" value="0.1" type="text" id="yearSalaryGrowthRate" placeholder="薪资年增长率">
+    </div>
+
+    <div class="form-item">
+      <input class="form-input" value="10" type="text" id="years" placeholder="攒多少年">
+    </div>
+  </form>
+
+  <div class="form-item">
+    <button class="submit-btn" id="submit" onclick="calculateMoney()">提交</button>
+  </div>
+
+  <div class="finicial-summary" id="summary">
+    
+  </div>
+
+  <script>
+
+    function getFormInfo(){
+      const years = document.getElementById('years').value || 0
+      const baseMonthSalary = document.getElementById('baseMonthSalary').value || 0
+      const livingExpenses = document.getElementById('livingExpenses').value || 0
+      const annualizedRate = document.getElementById('annualizedRate').value || 0
+      const yearAwards = document.getElementById('yearAwards').value || 0
+      const yearSalaryGrowthRate = document.getElementById('yearSalaryGrowthRate').value || 0
+
+      return { years, baseMonthSalary, livingExpenses, annualizedRate, yearAwards, yearSalaryGrowthRate }
+    }
+    
+
+    function calulate(info){
+      const { years, baseMonthSalary, livingExpenses, annualizedRate, yearAwards, yearSalaryGrowthRate } = info
+      const months = years * 12
+      const monthlyRate = 1 + (annualizedRate - 1) / 12
+      let sumMonthSalary = 0
+      let sumYearAwards = 0
+
+      for (let i = 0; i < months; i++){
+        const currentYear = Math.floor(i / 12)
+        const monthNetIncome = (baseMonthSalary * (1 + currentYear * 0.1)) - livingExpenses
+
+        sumMonthSalary += (monthNetIncome * Math.pow(monthlyRate, i))
+      }
+
+      for (let i = 0; i < years; i++){
+        sumYearAwards += (yearAwards * Math.pow(annualizedRate, i))
+      }
+
+      
+      return sumMonthSalary + sumYearAwards
+    }
+
+    const submitBtn = document.getElementById('submit')
+    const summary =  document.getElementById('summary')
+
+    function calculateMoney(){
+      console.log(12312)
+      const info = getFormInfo()
+      const money = parseInt(calulate(info))
+
+      summary.innerHTML = `你一共会在 ${info.years} 年的时间里，攒到 ${money} 元钱`
+    }
+    
+  </script>
+</body>
+</html>
