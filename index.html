@@ -26,7 +26,7 @@
 
     .form-group-title {
       color: #4a4a4a;
-      font-size: 2em;
+      font-size: 1.8em;
       margin-bottom: .2em;
       margin-top: 1em;
     }
@@ -84,14 +84,16 @@
 
     .finicial-summary {
       padding: 20px;
-      color: #4a4a4a;
+      color: #333;
       line-height: 1.6em;
+      margin-bottom: 80px;
+      line-height: 1.8;
+      font-size: 14px;
     }
 
     .finicial-summary i {
       color: #39f;
       font-weight: bold;
-      margin: 0 5px;
       font-style: normal;
     }
 
@@ -100,7 +102,7 @@
 <body>
   <div class="form-wrapper">
     <form class="form-group">
-      <h1 class="form-group-title">攒钱计算器</h1>
+      <h1 class="form-group-title">打工人攒钱计算器</h1>
   
       <div class="form-item">
         <label class="form-item-label">基本月收入<span class="unit">元/月</span></label>
@@ -129,12 +131,12 @@
 
       <div class="form-item">
         <label class="form-item-label">年化率<span class="unit">比率/年</span></label>
-        <input class="form-input" value="1.18" type="text" id="annualizedRate">
+        <input class="form-input" value="1.13" type="text" id="annualizedRate">
       </div>
   
       <div class="form-item">
         <label class="form-item-label">基本月生活费<span class="unit">元/月</span></label>
-        <input class="form-input" value="7000" type="text" id="livingExpenses">
+        <input class="form-input" value="6000" type="text" id="livingExpenses">
       </div>
       
       <div class="form-item">
@@ -171,19 +173,30 @@
       const monthlyRate = 1 + (annualizedRate - 1) / 12
       let sumMonthSalary = 0
       let sumYearAwards = 0
+      let sumSidelineSalary = 0
+      let sumExpenses = 0
 
       for (let i = 0; i < months; i++){
         const currentYear = Math.floor(i / 12)
-        const monthNetIncome = (baseMonthSalary * (1 + currentYear * yearSalaryGrowthRate)) + (sideline * (1 + currentYear * yearSidelineGrowthRate)) - livingExpenses
+        const monthBasicIncome = (baseMonthSalary * (1 + currentYear * yearSalaryGrowthRate))
+        sumMonthSalary += (monthBasicIncome * Math.pow(monthlyRate, i))
+      }
 
-        sumMonthSalary += (monthNetIncome * Math.pow(monthlyRate, i))
+      for (let i = 0; i < months; i++){
+        const currentYear = Math.floor(i / 12)
+        const monthSidelineIncome = (sideline * (1 + currentYear * yearSidelineGrowthRate))
+        sumSidelineSalary += (monthSidelineIncome * Math.pow(monthlyRate, i))
       }
 
       for (let i = 0; i < years; i++){
         sumYearAwards += (yearAwards * Math.pow(annualizedRate, i))
       }
       
-      return sumMonthSalary + sumYearAwards
+      sumExpenses = livingExpenses * months
+
+      const sumMoney = sumMonthSalary + sumSidelineSalary + sumYearAwards - sumExpenses
+      
+      return { sumMoney, sumExpenses, sumMonthSalary, sumSidelineSalary, sumYearAwards }
     }
 
     const submitBtn = document.getElementById('submit')
@@ -191,9 +204,22 @@
 
     function calculateMoney(){
       const info = getFormInfo()
-      const money = parseInt(calulate(info))
+      const sumMoney = parseInt(calulate(info).sumMoney)
+      const sumMonthSalary = parseInt(calulate(info).sumMonthSalary)
+      const sumSidelineSalary = parseInt(calulate(info).sumSidelineSalary)
+      const sumYearAwards = parseInt(calulate(info).sumYearAwards)
+      const sumExpenses = parseInt(calulate(info).sumExpenses)
 
-      summary.innerHTML = `你一共会在<i>${info.years}</i>年的时间里，攒到<i>${money}</i>元钱。`
+      const sumMoneyIfNoInvestment = parseInt(calulate({ ...info, annualizedRate: 1}).sumMoney)
+      const investmentIncome = sumMoney - sumMoneyIfNoInvestment
+
+      summary.innerHTML = `
+      您会在 ${info.years} 年的时间里，赚到：<br/>
+      基本收入 ${sumMonthSalary} 元，<br/>
+      副业收入 ${sumSidelineSalary} 元，<br/>
+      年终奖工 ${sumYearAwards} 元，<br/>
+      支出 -${sumExpenses} 元。<br/>
+      一共可以攒 <i>${sumMoney}</i> 元。<br/>`
     }
   </script>
 </body>
