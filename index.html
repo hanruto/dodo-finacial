@@ -33,7 +33,19 @@
 
     .form-item {
       margin: 20px 0;
+    }
 
+    .form-item-label {
+      font-size: 14px;
+      color: #4a4a4a;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .unit {
+      margin-left: 10px;
+      color: #999;
+      font-size: 12px;
     }
 
     .form-input {
@@ -41,7 +53,7 @@
       width: 100%;
       height: 40px;
       padding: 0;
-      text-indent: 12px;
+      text-indent: 10px;
       border-radius: 0;
       font-size: 14px;
     }
@@ -61,6 +73,7 @@
       font-size: 16px;
       margin: 0 20px;
       box-sizing: border-box;
+      margin-top: 10px;
     }
 
     .submit-btn:focus,
@@ -74,6 +87,14 @@
       color: #4a4a4a;
       line-height: 1.6em;
     }
+
+    .finicial-summary i {
+      color: #39f;
+      font-weight: bold;
+      margin: 0 5px;
+      font-style: normal;
+    }
+
   </style>
 </head>
 <body>
@@ -82,27 +103,43 @@
       <h1 class="form-group-title">攒钱计算器</h1>
   
       <div class="form-item">
-        <input class="form-input" value="20000" type="text" id="baseMonthSalary" placeholder="基本月薪">
+        <label class="form-item-label">基本月收入<span class="unit">元/月</span></label>
+        <input class="form-input" value="20000" type="text" id="baseMonthSalary">
       </div>
   
       <div class="form-item">
-        <input class="form-input" value="4000" type="text" id="livingExpenses" placeholder="基本月生活费">
+        <label class="form-item-label">副业月收入<span class="unit">元/月</span></label>
+        <input class="form-input" value="6000" type="text" id="sideline">
+      </div>
+
+      <div class="form-item">
+        <label class="form-item-label">年终奖<span class="unit">元/年</span></label>
+        <input class="form-input" value="80000" type="text" id="yearAwards">
       </div>
   
       <div class="form-item">
-        <input class="form-input" value="80000" type="text" id="yearAwards" placeholder="年终奖">
+        <label class="form-item-label">基本收入年增长率<span class="unit">比率/年</span></label>
+        <input class="form-input" value="0.1" type="text" id="yearSalaryGrowthRate">
+      </div>
+
+      <div class="form-item">
+        <label class="form-item-label">副业收入年增加率<span class="unit">比率/年</span></label>
+        <input class="form-input" value="0.1" type="text" id="yearSidelineGrowthRate">
+      </div>
+
+      <div class="form-item">
+        <label class="form-item-label">年化率<span class="unit">比率/年</span></label>
+        <input class="form-input" value="1.18" type="text" id="annualizedRate">
       </div>
   
       <div class="form-item">
-        <input class="form-input" value="1.18" type="text" id="annualizedRate" placeholder="年化率">
+        <label class="form-item-label">基本月生活费<span class="unit">元/月</span></label>
+        <input class="form-input" value="7000" type="text" id="livingExpenses">
       </div>
-  
+      
       <div class="form-item">
-        <input class="form-input" value="0.1" type="text" id="yearSalaryGrowthRate" placeholder="薪资年增长率">
-      </div>
-  
-      <div class="form-item">
-        <input class="form-input" value="10" type="text" id="years" placeholder="攒多少年">
+        <label class="form-item-label">攒多久<span class="unit">年</span></label>
+        <input class="form-input" value="10" type="text" id="years">
       </div>
     </form>
   
@@ -110,14 +147,10 @@
       <button class="submit-btn" id="submit" onclick="calculateMoney()">提交</button>
     </div>
   </div>
-  
 
-  <div class="finicial-summary" id="summary">
-    
-  </div>
+  <div class="finicial-summary" id="summary"></div>
 
   <script>
-
     function getFormInfo(){
       const years = document.getElementById('years').value || 0
       const baseMonthSalary = document.getElementById('baseMonthSalary').value || 0
@@ -125,13 +158,15 @@
       const annualizedRate = document.getElementById('annualizedRate').value || 0
       const yearAwards = document.getElementById('yearAwards').value || 0
       const yearSalaryGrowthRate = document.getElementById('yearSalaryGrowthRate').value || 0
+      const sideline = document.getElementById('sideline').value || 0
+      const yearSidelineGrowthRate = document.getElementById('yearSidelineGrowthRate').value || 0
 
-      return { years, baseMonthSalary, livingExpenses, annualizedRate, yearAwards, yearSalaryGrowthRate }
+      return { years, baseMonthSalary, livingExpenses, annualizedRate, yearAwards, yearSalaryGrowthRate, sideline, yearSidelineGrowthRate }
     }
     
 
     function calulate(info){
-      const { years, baseMonthSalary, livingExpenses, annualizedRate, yearAwards, yearSalaryGrowthRate } = info
+      const { years, baseMonthSalary, livingExpenses, annualizedRate, yearAwards, yearSalaryGrowthRate, sideline, yearSidelineGrowthRate } = info
       const months = years * 12
       const monthlyRate = 1 + (annualizedRate - 1) / 12
       let sumMonthSalary = 0
@@ -139,7 +174,7 @@
 
       for (let i = 0; i < months; i++){
         const currentYear = Math.floor(i / 12)
-        const monthNetIncome = (baseMonthSalary * (1 + currentYear * 0.1)) - livingExpenses
+        const monthNetIncome = (baseMonthSalary * (1 + currentYear * yearSalaryGrowthRate)) + (sideline * (1 + currentYear * yearSidelineGrowthRate)) - livingExpenses
 
         sumMonthSalary += (monthNetIncome * Math.pow(monthlyRate, i))
       }
@@ -147,7 +182,6 @@
       for (let i = 0; i < years; i++){
         sumYearAwards += (yearAwards * Math.pow(annualizedRate, i))
       }
-
       
       return sumMonthSalary + sumYearAwards
     }
@@ -156,13 +190,11 @@
     const summary =  document.getElementById('summary')
 
     function calculateMoney(){
-      console.log(12312)
       const info = getFormInfo()
       const money = parseInt(calulate(info))
 
-      summary.innerHTML = `你一共会在 ${info.years} 年的时间里，攒到 ${money} 元钱`
+      summary.innerHTML = `你一共会在<i>${info.years}</i>年的时间里，攒到<i>${money}</i>元钱。`
     }
-    
   </script>
 </body>
 </html>
