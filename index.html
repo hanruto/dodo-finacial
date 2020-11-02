@@ -82,13 +82,22 @@
       outline: none;
     }
 
-    .finicial-summary {
+    .rules, .finicial-summary {
       padding: 20px;
       color: #333;
       line-height: 1.6em;
-      margin-bottom: 80px;
       line-height: 1.8;
       font-size: 14px;
+    }
+
+    .rules {
+      padding-bottom: 60px;
+      background-color: #eee;
+      color: #777;
+    }
+
+    .finicial-summary {
+      margin-bottom: 0px;
     }
 
     .finicial-summary i {
@@ -96,7 +105,6 @@
       font-weight: bold;
       font-style: normal;
     }
-
   </style>
 </head>
 <body>
@@ -131,11 +139,11 @@
 
       <div class="form-item">
         <label class="form-item-label">年化率<span class="unit">比率/年</span></label>
-        <input class="form-input" value="1.13" type="text" id="annualizedRate">
+        <input class="form-input" value="1.15" type="text" id="annualizedRate">
       </div>
   
       <div class="form-item">
-        <label class="form-item-label">基本月生活费<span class="unit">元/月</span></label>
+        <label class="form-item-label">平均月支出<span class="unit">元/月</span></label>
         <input class="form-input" value="6000" type="text" id="livingExpenses">
       </div>
       
@@ -151,6 +159,13 @@
   </div>
 
   <div class="finicial-summary" id="summary"></div>
+
+  <div class="rules">
+    注：<br/>
+    1. 本算法中，月支出会按照月基本收入和副业收入的比例来从两部分收入中等比扣除。<br/>
+    2. 工资增长会每年计算一次。<br/>
+    3. 想要对比投资收入，把年化率值设为0即可。<br/>
+  </div>
 
   <script>
     function getFormInfo(){
@@ -171,6 +186,7 @@
       const { years, baseMonthSalary, livingExpenses, annualizedRate, yearAwards, yearSalaryGrowthRate, sideline, yearSidelineGrowthRate } = info
       const months = years * 12
       const monthlyRate = 1 + (annualizedRate - 1) / 12
+      
       let sumMonthSalary = 0
       let sumYearAwards = 0
       let sumSidelineSalary = 0
@@ -178,25 +194,22 @@
 
       for (let i = 0; i < months; i++){
         const currentYear = Math.floor(i / 12)
-        const monthBasicIncome = (baseMonthSalary * (1 + currentYear * yearSalaryGrowthRate))
-        sumMonthSalary += (monthBasicIncome * Math.pow(monthlyRate, i))
-      }
+        const monthBasicIncome = (baseMonthSalary) * (1 + currentYear * yearSalaryGrowthRate)
+        const monthSidelineIncome = sideline * (1 + currentYear * yearSidelineGrowthRate)
+        const expensesFromBasic = monthBasicIncome / (monthSidelineIncome + monthBasicIncome) * livingExpenses
+        const expensesFromSideline = monthSidelineIncome / (monthSidelineIncome + monthBasicIncome) * livingExpenses
 
-      for (let i = 0; i < months; i++){
-        const currentYear = Math.floor(i / 12)
-        const monthSidelineIncome = (sideline * (1 + currentYear * yearSidelineGrowthRate))
-        sumSidelineSalary += (monthSidelineIncome * Math.pow(monthlyRate, i))
+        sumMonthSalary += (monthBasicIncome - expensesFromBasic) * Math.pow(monthlyRate, i)
+        sumSidelineSalary += (monthSidelineIncome - expensesFromSideline) * Math.pow(monthlyRate, i)
       }
 
       for (let i = 0; i < years; i++){
         sumYearAwards += (yearAwards * Math.pow(annualizedRate, i))
       }
-      
-      sumExpenses = livingExpenses * months
 
-      const sumMoney = sumMonthSalary + sumSidelineSalary + sumYearAwards - sumExpenses
-      
-      return { sumMoney, sumExpenses, sumMonthSalary, sumSidelineSalary, sumYearAwards }
+      const sumMoney = sumMonthSalary + sumSidelineSalary + sumYearAwards
+
+      return { sumMoney, sumMonthSalary, sumSidelineSalary, sumYearAwards }
     }
 
     const submitBtn = document.getElementById('submit')
@@ -208,18 +221,15 @@
       const sumMonthSalary = parseInt(calulate(info).sumMonthSalary)
       const sumSidelineSalary = parseInt(calulate(info).sumSidelineSalary)
       const sumYearAwards = parseInt(calulate(info).sumYearAwards)
-      const sumExpenses = parseInt(calulate(info).sumExpenses)
-
       const sumMoneyIfNoInvestment = parseInt(calulate({ ...info, annualizedRate: 1}).sumMoney)
       const investmentIncome = sumMoney - sumMoneyIfNoInvestment
 
       summary.innerHTML = `
       您会在 ${info.years} 年的时间里，赚到：<br/>
-      基本收入 ${sumMonthSalary} 元，<br/>
-      副业收入 ${sumSidelineSalary} 元，<br/>
-      年终奖工 ${sumYearAwards} 元，<br/>
-      支出 -${sumExpenses} 元。<br/>
-      一共可以攒 <i>${sumMoney}</i> 元。<br/>`
+      基本收入总计 ${sumMonthSalary} 元，<br/>
+      副业收入总计 ${sumSidelineSalary} 元，<br/>
+      年终奖收入总计 ${sumYearAwards} 元，<br/>
+      一共可以攒 <i>${sumMoney}</i> 元。`
     }
   </script>
 </body>
