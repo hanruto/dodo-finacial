@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport" />
-  <title>Document</title>
+  <title>打工人攒钱计算器</title>
   <style>
     body {
       margin: 0;
@@ -91,7 +91,7 @@
     }
 
     .rules {
-      padding-bottom: 60px;
+      padding-bottom: 50px;
       background-color: #eee;
       color: #777;
     }
@@ -133,7 +133,7 @@
       </div>
 
       <div class="form-item">
-        <label class="form-item-label">副业收入年增加率<span class="unit">比率/年</span></label>
+        <label class="form-item-label">副业收入年增长率<span class="unit">比率/年</span></label>
         <input class="form-input" value="0.1" type="text" id="yearSidelineGrowthRate">
       </div>
 
@@ -162,8 +162,8 @@
 
   <div class="rules">
     注：<br/>
-    1. 本算法中，月支出会按照月基本收入和副业收入的比例来从两部分收入中等比扣除。<br/>
-    2. 工资增长会每年计算一次。<br/>
+    1. 月支出会在每个月按照月基本收入和副业收入的比例来从两部分收入中等比扣除。<br/>
+    2. 基本收入和副业收入会每年开始根据增长率计算一次。<br/>
     3. 想要对比投资收入，把年化率值设为0即可。<br/>
   </div>
 
