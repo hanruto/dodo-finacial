@@ -71,9 +71,7 @@
       background-color: #39f;
       color: #fff;
       font-size: 16px;
-      margin: 0 20px;
-      box-sizing: border-box;
-      margin-top: 10px;
+      margin: 20px;
     }
 
     .submit-btn:focus,
@@ -82,25 +80,32 @@
       outline: none;
     }
 
-    .rules, .finicial-summary {
+    .rules-content, .financial-summary {
       padding: 20px;
-      color: #333;
-      line-height: 1.6em;
-      line-height: 1.8;
       font-size: 14px;
+      max-width: 500px;
+      margin: 0 auto;
+      box-sizing: border-box;
+    }
+
+    .rules-content {
+      color: #999;
+      line-height: 1.8em;
     }
 
     .rules {
-      padding-bottom: 50px;
+      padding-bottom: 40px;
+      padding-top: 40px;
       background-color: #eee;
-      color: #777;
     }
 
-    .finicial-summary {
-      margin-bottom: 0px;
+    .financial-summary {
+      color: #333;
+      line-height: 2.4em;
+      margin-bottom: 40px;
     }
 
-    .finicial-summary i {
+    .financial-summary i {
       color: #39f;
       font-weight: bold;
       font-style: normal;
@@ -110,7 +115,7 @@
 <body>
   <div class="form-wrapper">
     <form class="form-group">
-      <h1 class="form-group-title">打工人攒钱计算器</h1>
+      <h1 class="form-group-title">攒钱计算器</h1>
   
       <div class="form-item">
         <label class="form-item-label">基本月收入<span class="unit">元/月</span></label>
@@ -158,13 +163,15 @@
     </div>
   </div>
 
-  <div class="finicial-summary" id="summary"></div>
+  <div class="financial-summary" id="summary"></div>
 
   <div class="rules">
-    注：<br/>
-    1. 月支出会在每个月按照月基本收入和副业收入的比例来从两部分收入中等比扣除。<br/>
-    2. 基本收入和副业收入会每年开始根据增长率计算一次。<br/>
-    3. 想要对比投资收入，把年化率值设为0即可。<br/>
+    <div class="rules-content">
+      计算规则备注：<br/>
+      1. 月支出会在每个月按照月基本收入和副业收入的比例来从两部分收入中等比扣除。<br/>
+      2. 基本收入和副业收入会每年开始根据增长率计算一次。<br/>
+      3. 想要对比投资收入，把年化率值设为0即可。<br/>
+    </div>
   </div>
 
   <script>
